@@ -1,33 +1,31 @@
-class HTTPError extends Error {
-  constructor(response) {
-    super(`HTTP Error Response: ${response.status} ${response.statusText}`);
-    this.response = response;
-  }
-}
+import { isFunction } from './utils.js';
+import { HTTPError } from './http-error.js'
 
-class  QuollHTTP {
+export class QuollHTTP {
   _statusMap = new Map();
 
-  constructor(baseUrl = '', headers = {}) {
+  constructor(baseUrl = '', headers) {
     this._baseUrl = baseUrl
-    this.headers = headers;
+    this._headers = headers ?? { 'Content-Type': 'application/json' };
   }
 
   onStart(callBack) {
+    if (!isFunction(callBack)) throw new Error('param sholud be a function');
     this._onStart = callBack
   }
 
   onEnd(callBack) {
+    if (!isFunction(callBack)) throw new Error('param sholud be a function');
     this._onEnd = callBack
   }
 
-
   onStatus(statusCode, callBack) {
+    if (!isFunction(callBack)) throw new Error('param sholud be a function');
     this._statusMap.set(statusCode, callBack)
   }
 
   setHeader(header = {}) {
-    this.headers = header
+    this._headers = header
   }
 
   async get(url, obj = {}) {
@@ -39,31 +37,35 @@ class  QuollHTTP {
   }
 
   async delete(url, options) {
+    const { headers, ...rest } = options;
     const res = await fetch(this._baseUrl + url, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { ...this._header, ...headers },
+      ...rest
     });
     return this._handleResponse(res);
   }
 
   async post(url, body, options) {
-    return this._httpMethod('POST')(this._baseUrl + url, body, options);
+    return this._httpMethodWithBody('POST')(this._baseUrl + url, body, options);
   }
 
   async put(url, body, options) {
-    return this._httpMethod('PUT')(this._baseUrl + url, body, options);
+    return this._httpMethodWithBody('PUT')(this._baseUrl + url, body, options);
   }
 
   async patch(url, body, options) {
-    return this._httpMethod('PATCH')(this._baseUrl + url, body, options);
+    return this._httpMethodWithBody('PATCH')(this._baseUrl + url, body, options);
   }
 
-  _httpMethod(method) {
+  _httpMethodWithBody(method) {
     return async (url, body = {}, options = {}) => {
+      const { headers, ...rest } = options;
       const res = await fetch(url, {
         method,
         body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json' }
+        headers: { ...this._header, ...headers },
+        ...rest
       });
       return this._handleResponse(res);
     }
@@ -71,27 +73,20 @@ class  QuollHTTP {
 
   async _handleResponse(res) {
     if (this._onEnd) this._onEnd();
+    if (this._statusMap.has(res.status)) {
+      this._statusMap.get(res.status)(res);
+    }
     if (!res.ok) {
-      if (this._statusMap.has(res.status)) {
-        return [undefined, this._statusMap.get(res.status)(res)];
-      }
       return [undefined, new HTTPError(res)]
     }
-    const data = await res['json']();
+
+    const data = await res[this._getResponseType(res)]();
     return [data, undefined]
   }
-}
 
-
-class Quoll extends QuollHTTP {
-  constructor(baseUrl = '', headers = {}) {
-    super(baseUrl, headers);
-  }
-  
-  create(baseUrl, header) {
-    return new QuollHTTP(baseUrl, header)
+  _getResponseType() {
+    // todo
+    return 'json';
+    return 'text'
   }
 }
-
-const quoll = new Quoll();
-export default quoll;
