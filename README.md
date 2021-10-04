@@ -1,6 +1,6 @@
 # Quoll
 
-A tiny http library build on top of the browser fetch api. In only 0.7Kb Quoll offers:
+A tiny http client library build on top of the browser fetch api. In only 0.7Kb Quoll offers:
 
 - a simplified interaction with the most common RESTful API.
 - a clean way to handle HTTP errors.
@@ -29,6 +29,19 @@ const basicQuollGet = async () => {
 quoll
   .get('https://jsonplaceholder.typicode.com/todos')
   .then(([data, error]) => console.log(data, error));
+```
+
+### NODE.JS
+
+fetch don't exist in node js, if you wanna use quoll-http on node.js you have to install [node-fetch](https://www.npmjs.com/package/node-fetch). 
+After that patch it globally like explained in node-fetch documentation:
+
+```js
+import fetch from 'node-fetch';
+
+if (!globalThis.fetch) {
+  globalThis.fetch = fetch;
+}
 ```
 
 ## Documentation
@@ -131,7 +144,7 @@ quoll.onHttpEnd(() => console.log('remove loader'));
 
 When you are dealing with multiple endpoint can be tedious passing everitime a different configuration. Quoll offers a .create() method, it return a new instance of quoll that you can configure at will. create() take two arguments: a base endpoint and a configuration object used during the request.
 
-````js
+```js
 const placeholderApi = quoll.create('https://jsonplaceholder.typicode.com/', {header: new header(), ...etc });
 const githubApi = quoll.create('https://api.github.com/', {header: new header(), ...etc });
 
@@ -139,16 +152,3 @@ placeholderApi.get('todos'); // GET https://jsonplaceholder.typicode.com/todos
 githubApi.get('emojis'); // GET https://api.github.com/emojis
 ```
 
-````
-
-### NODE.JS
-
-fetch don't exist in node js, if you wanna use quoll-http on node.js you have to install [node-fetch](https://www.npmjs.com/package/node-fetch) and then monkey patch fetch like explained in node-fetch documnetation:
-
-```js
-import fetch from 'node-fetch';
-
-if (!globalThis.fetch) {
-  globalThis.fetch = fetch;
-}
-```
