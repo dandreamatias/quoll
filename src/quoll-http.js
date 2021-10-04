@@ -1,37 +1,44 @@
 import { isFunction } from './utils.js';
-import { HTTPError } from './http-error.js'
+import { HTTPError } from './http-error.js';
 
 export class QuollHTTP {
   _statusMap = new Map();
 
   constructor(baseUrl = '', headers) {
-    this._baseUrl = baseUrl
+    this._baseUrl = baseUrl;
     this._headers = headers ?? { 'Content-Type': 'application/json' };
   }
 
   onStart(callBack) {
     if (!isFunction(callBack)) throw new Error('param sholud be a function');
-    this._onStart = callBack
+    this._onStart = callBack;
   }
 
   onEnd(callBack) {
     if (!isFunction(callBack)) throw new Error('param sholud be a function');
-    this._onEnd = callBack
+    this._onEnd = callBack;
   }
 
   onStatus(statusCode, callBack) {
     if (!isFunction(callBack)) throw new Error('param sholud be a function');
-    this._statusMap.set(statusCode, callBack)
+    this._statusMap.set(statusCode, callBack);
   }
 
   setHeader(header = {}) {
-    this._headers = header
+    this._headers = header;
   }
 
   async get(url, obj = {}) {
     if (this._onStart) this._onStart();
     const hasParams = Object.keys(obj).length !== 0;
-    const fullUrl = (this._baseUrl + url) + (hasParams ? `?${Object.keys(obj).map(key => key + '=' + obj[key]).join('&')}` : '');
+    const fullUrl =
+      this._baseUrl +
+      url +
+      (hasParams
+        ? `?${Object.keys(obj)
+            .map((key) => key + '=' + obj[key])
+            .join('&')}`
+        : '');
     const res = await fetch(fullUrl);
     return this._handleResponse(res);
   }
@@ -41,7 +48,7 @@ export class QuollHTTP {
     const res = await fetch(this._baseUrl + url, {
       method: 'DELETE',
       headers: { ...this._header, ...headers },
-      ...rest
+      ...rest,
     });
     return this._handleResponse(res);
   }
@@ -65,28 +72,28 @@ export class QuollHTTP {
         method,
         body: JSON.stringify(body),
         headers: { ...this._header, ...headers },
-        ...rest
+        ...rest,
       });
       return this._handleResponse(res);
-    }
+    };
   }
 
   async _handleResponse(res) {
     if (this._onEnd) this._onEnd();
     if (this._statusMap.has(res.status)) {
-      this._statusMap.get(res.status)(res);
+      await this._statusMap.get(res.status)(res);
     }
     if (!res.ok) {
-      return [undefined, new HTTPError(res)]
+      return [undefined, new HTTPError(res)];
     }
 
-    const data = await res[this._getResponseType(res)]();
-    return [data, undefined]
+    const data = await res['json'](); // TODO this._getResponseType(res)
+    return [data, undefined];
   }
 
   _getResponseType() {
     // todo
     return 'json';
-    return 'text'
+    return 'text';
   }
 }
