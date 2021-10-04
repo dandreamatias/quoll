@@ -7,7 +7,9 @@ A tiny http client library build on top of the browser fetch api. In only 0.7Kb 
 - others utilities to implement interceptors and custom behaviours on specifics http status codes.
 
 [Getting started](#user-content-getting-started)
+
 [Documentation](#user-content-documentation)
+
 [ADVANCED](#user-content-advanced)
 
 -----
