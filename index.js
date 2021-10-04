@@ -1,4 +1,4 @@
-import { QuollHTTP } from "./quoll-http";
+import { QuollHTTP } from './src/quoll-http.js';
 
 class Quoll extends QuollHTTP {
   constructor(baseUrl = '', headers = {}) {
@@ -6,12 +6,10 @@ class Quoll extends QuollHTTP {
   }
 
   create(baseUrl, header) {
-    return new QuollHTTP(baseUrl, header)
+    return new QuollHTTP(baseUrl, header);
   }
 
-  extend(quollClass, baseUrl, header) {
-
-  }
+  extend(quollClass, baseUrl, header) {}
 }
 
 const quoll = new Quoll();
