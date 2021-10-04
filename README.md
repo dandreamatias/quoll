@@ -6,6 +6,18 @@ A tiny http client library build on top of the browser fetch api. In only 0.7Kb 
 - a clean way to handle HTTP errors.
 - others utilities to implement interceptors and custom behaviours on specifics http status codes.
 
+> :warning: **Node.js**: 
+"fetch" don't exist in node js, if you wanna use quoll-http you have to: 
+1) install [node-fetch](https://www.npmjs.com/package/node-fetch). 
+2) patch 'fetch' globally like explained in node-fetch documentation:
+```js
+import fetch from 'node-fetch';
+
+if (!globalThis.fetch) {
+  globalThis.fetch = fetch;
+}
+```
+
 ## Getting started
 
 1. install quoll:
@@ -29,19 +41,6 @@ const basicQuollGet = async () => {
 quoll
   .get('https://jsonplaceholder.typicode.com/todos')
   .then(([data, error]) => console.log(data, error));
-```
-
-### NODE.JS
-
-fetch don't exist in node js, if you wanna use quoll-http on node.js you have to install [node-fetch](https://www.npmjs.com/package/node-fetch). 
-After that patch it globally like explained in node-fetch documentation:
-
-```js
-import fetch from 'node-fetch';
-
-if (!globalThis.fetch) {
-  globalThis.fetch = fetch;
-}
 ```
 
 ## Documentation
