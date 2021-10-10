@@ -74,7 +74,7 @@ export class QuollHTTP {
       const res = await fetch(url, {
         method,
         body: JSON.stringify(body),
-        headers: { ...this._header, ...headers },
+        headers: { ...this._header, ...(headers || {}) },
         ...rest,
       });
       return this._handleResponse(res);
@@ -90,7 +90,7 @@ export class QuollHTTP {
       return [undefined, new HTTPError(res)];
     }
 
-    const data = await res['json'](); // TODO this._getResponseType(res)
+    const data = await res.json(); // TODO this._getResponseType(res)
     return [data, undefined];
   }
 
