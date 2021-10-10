@@ -107,6 +107,9 @@ quoll.put(
 
 quoll.patch('https://jsonplaceholder.typicode.com/users', { age: 29 }, { cache: 'no-cache' });
 // PATCH https://jsonplaceholder.typicode.com/users
+
+quoll.delete('https://jsonplaceholder.typicode.com/users', { id: 431 });
+// DELETE https://jsonplaceholder.typicode.com/users
 ```
 
 post/put/patch/delete method takes 3 arguments:
@@ -162,7 +165,7 @@ setHeaders accept an object as a parameter, it replace the the whole headers pro
 
 `updateHeaders(key, value)`
 
-`updateHeaders` accept two parameters, a key(string) and a value(string).
+updateHeaders accept two parameters, a key(string) and a value(string).
 
 `setHeaders` and `updateHeaders` very usefull combined with `onHttpStart` to attach a fresh value in a http call:
 
