@@ -2,18 +2,20 @@ import { isFunction } from './utils.js';
 import { HTTPError } from './http-error.js';
 
 export class QuollHTTP {
-  constructor(baseUrl = '', headers) {
+  constructor(baseUrl = '', options = {}) {
     this._statusMap = new Map();
     this._baseUrl = baseUrl;
+    const { headers, method, ...rest } = options;
+    this._options = rest;
     this._headers = headers || { 'Content-Type': 'application/json' };
   }
 
-  onStart(callBack) {
+  onHttpStart(callBack) {
     if (!isFunction(callBack)) throw new Error('param sholud be a function');
     this._onStart = callBack;
   }
 
-  onEnd(callBack) {
+  onHttpEnd(callBack) {
     if (!isFunction(callBack)) throw new Error('param sholud be a function');
     this._onEnd = callBack;
   }
@@ -23,27 +25,35 @@ export class QuollHTTP {
     this._statusMap.set(statusCode, callBack);
   }
 
-  setHeader(header = {}) {
+  setHeaders(header = {}) {
     this._headers = header;
+  }
+
+  updateHeaders(key, value) {
+    if (key === null || key === undefined) throw new Error('invalid key');
+    this._headers[key] = value;
   }
 
   async get(url, obj = {}, options = {}) {
     const { headers, ...rest } = options;
     if (this._onStart) this._onStart();
-    const hasParams = Object.keys(obj).length !== 0;
-    const fullUrl =
-      `${this._baseUrl}${url}` +
-      (hasParams
-        ? `?${Object.keys(obj)
-            .map((key) => key + '=' + obj[key])
-            .join('&')}`
-        : '');
+    const fullUrl = `${this._baseUrl}${url}${this._buildQueryParams(obj)}`;
     const res = await fetch(fullUrl, {
       method: 'GET',
       headers: new Headers({ ...this._headers, ...(headers || {}) }),
+      ...this._options,
       ...rest,
     });
     return this._handleResponse(res);
+  }
+
+  _buildQueryParams(obj) {
+    const hasParams = Object.keys(obj).length !== 0;
+    return hasParams
+      ? `?${Object.keys(obj)
+          .map((key) => key + '=' + obj[key])
+          .join('&')}`
+      : '';
   }
 
   async delete(url, body, options) {
@@ -69,6 +79,7 @@ export class QuollHTTP {
         method,
         body: JSON.stringify(body),
         headers: new Headers({ ...this._headers, ...(headers || {}) }),
+        ...this._options,
         ...rest,
       });
       return this._handleResponse(res);
@@ -88,14 +99,7 @@ export class QuollHTTP {
       const data = await res.json();
       return [data, undefined];
     } catch (e) {
-      return [undefined, undefined];
+      return [res, undefined];
     }
-    // TODO this._getResponseType(res)
-  }
-
-  _getResponseType() {
-    // todo
-    return 'json';
-    return 'text';
   }
 }
