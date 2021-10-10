@@ -1,6 +1,6 @@
 {
     "name": "quoll-http",
-    "version": "1.0.7",
+    "version": "1.0.9",
     "description": "A tiny http library build on top of the browser fetch api.",
     "main": "index.js",
     "type": "module",

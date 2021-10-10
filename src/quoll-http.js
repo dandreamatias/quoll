@@ -50,7 +50,7 @@ export class QuollHTTP {
     const { headers, ...rest } = options;
     const res = await fetch(this._baseUrl + url, {
       method: 'DELETE',
-      headers: { ...this._header, ...headers },
+      headers: { ...this._header, ...(headers || {}) },
       ...rest,
     });
     return this._handleResponse(res);
