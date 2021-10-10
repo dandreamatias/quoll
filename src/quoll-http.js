@@ -90,8 +90,13 @@ export class QuollHTTP {
       return [undefined, new HTTPError(res)];
     }
 
-    const data = await res.json(); // TODO this._getResponseType(res)
-    return [data, undefined];
+    try {
+      const data = await res.json();
+      return [data, undefined];
+    } catch (e) {
+      return [undefined, undefined];
+    }
+    // TODO this._getResponseType(res)
   }
 
   _getResponseType() {
