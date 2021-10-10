@@ -1,6 +1,6 @@
 {
     "name": "quoll-http",
-    "version": "1.0.9",
+    "version": "1.0.10",
     "description": "A tiny http library build on top of the browser fetch api.",
     "main": "index.js",
     "type": "module",
@@ -14,8 +14,11 @@
         "http",
         "get",
         "post",
+        "put",
         "patch",
-        "browser"
+        "delete",
+        "browser",
+        "library"
     ],
     "author": "D'Andrea Matias",
     "license": "MIT",

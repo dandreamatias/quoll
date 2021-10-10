@@ -46,14 +46,8 @@ export class QuollHTTP {
     return this._handleResponse(res);
   }
 
-  async delete(url, options) {
-    const { headers, ...rest } = options;
-    const res = await fetch(this._baseUrl + url, {
-      method: 'DELETE',
-      headers: { ...this._header, ...(headers || {}) },
-      ...rest,
-    });
-    return this._handleResponse(res);
+  async delete(url, body, options) {
+    return this._httpMethodWithBody('DELETE')(this._baseUrl + url, body, options);
   }
 
   async post(url, body, options) {
