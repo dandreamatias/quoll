@@ -12,12 +12,14 @@ A tiny http client library build on top of the browser fetch api. In only 0.7Kb 
 
 [ADVANCED](#user-content-advanced)
 
------
+---
 
-:warning: **Node.js**: 
-"fetch" don't exist in node js, if you wanna use quoll-http you have to: 
-1) install [node-fetch](https://www.npmjs.com/package/node-fetch). 
-2) patch 'fetch' globally like explained in node-fetch documentation:
+:warning: **Node.js**:
+"fetch" don't exist in node js, if you wanna use quoll-http you have to:
+
+1. install [node-fetch](https://www.npmjs.com/package/node-fetch).
+2. patch 'fetch' globally like explained in node-fetch documentation:
+
 ```js
 import fetch from 'node-fetch';
 
@@ -86,7 +88,7 @@ the get method take 3 arguments:
 2. object - it will automatically be transformed into a query params.
 3. object - used for extraconfiguration to overwrite the default settings
 
-#### POST - PUT - PATCH
+#### POST - PUT - PATCH - DELETE
 
 ```js
 quoll.post(
@@ -107,25 +109,11 @@ quoll.patch('https://jsonplaceholder.typicode.com/users', { age: 29 }, { cache: 
 // PATCH https://jsonplaceholder.typicode.com/users
 ```
 
-post/put/patch method takes 3 arguments:
+post/put/patch/delete method takes 3 arguments:
 
 1. string - the endpoint url.
 2. object - the body with all the data
 3. object - used for extraconfiguration to overwrite the default settings
-
-#### DELETE
-
-```js
-quoll.delete('https://jsonplaceholder.typicode.com/todos/2', { mode: 'cors' });
-// DELETE https://jsonplaceholder.typicode.com/todos/2
-```
-
-The delete method take 2 arguments:
-
-1. string - the endpoint url.
-2. object - used for extraconfiguration to overwrite the default settings
-
----
 
 ### ADVANCED
 
@@ -152,10 +140,35 @@ quoll.onHttpEnd(() => console.log('remove loader'));
 When you are dealing with multiple endpoint can be tedious passing everitime a different configuration. Quoll offers a .create() method, it return a new instance of quoll that you can configure at will. create() take two arguments: a base endpoint and a configuration object used during the request.
 
 ```js
-const placeholderApi = quoll.create('https://jsonplaceholder.typicode.com/', {header: new header(), ...etc });
-const githubApi = quoll.create('https://api.github.com/', {header: new header(), ...etc });
+const placeholderApi = quoll.create('https://jsonplaceholder.typicode.com/', {
+  headers: { 'Content-Type': 'application/json' },
+  mode: 'cors',
+  ...etc,
+});
+const githubApi = quoll.create('https://api.github.com/', {
+  headers: { 'Content-Type': 'application/json' },
+  ...etc,
+});
 
 placeholderApi.get('todos'); // GET https://jsonplaceholder.typicode.com/todos
 githubApi.get('emojis'); // GET https://api.github.com/emojis
 ```
 
+#### Others API
+
+`setHeaders({...headersProps})`
+
+setHeaders accept and object as a parameter, it replace the the whole headers property with a new one
+
+`updateHeaders(key, value)`
+
+`updateHeaders` accept two parameters, a key and a value.
+
+`setHeaders({...headersProps})` and `updateHeaders` very usefull combined with `onHttpStart` to attach a fresh value:
+
+```js
+quoll.onHttpStart(() => {
+  quoll.updateHeaders('Authorization', `Bearer ${localStorage.getItem('myToken')}`);
+  // read the token from the localstorage on every http request
+});
+```
