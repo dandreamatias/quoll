@@ -27,7 +27,7 @@ export class QuollHTTP {
     this._headers = header;
   }
 
-  async get(url, obj = {}, options) {
+  async get(url, obj = {}, options = {}) {
     const { headers, ...rest } = options;
     if (this._onStart) this._onStart();
     const hasParams = Object.keys(obj).length !== 0;
@@ -40,7 +40,7 @@ export class QuollHTTP {
         : '');
     const res = await fetch(fullUrl, {
       method: 'GET',
-      headers: { ...this._header, ...headers },
+      headers: { ...this._header, ...(headers || {}) },
       ...rest,
     });
     return this._handleResponse(res);
