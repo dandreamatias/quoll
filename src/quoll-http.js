@@ -40,7 +40,7 @@ export class QuollHTTP {
         : '');
     const res = await fetch(fullUrl, {
       method: 'GET',
-      headers: { ...this._headers, ...(headers || {}) },
+      headers: new Headers({ ...this._headers, ...(headers || {}) }),
       ...rest,
     });
     return this._handleResponse(res);
@@ -68,7 +68,7 @@ export class QuollHTTP {
       const res = await fetch(url, {
         method,
         body: JSON.stringify(body),
-        headers: { ...this._headers, ...(headers || {}) },
+        headers: new Headers({ ...this._headers, ...(headers || {}) }),
         ...rest,
       });
       return this._handleResponse(res);
