@@ -1,20 +1,33 @@
 {
-    "name": "quoll",
-    "version": "1.0.0",
-    "description": "",
-    "main": "src/index.js",
+    "name": "quoll-http",
+    "version": "1.0.5",
+    "description": "A tiny http library build on top of the browser fetch api.",
+    "main": "index.js",
     "type": "module",
     "scripts": {
         "test": "jest",
         "test:coverage": "jest --coverage",
         "test:watch": "jest --watch"
     },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "node-fetch": "^3.0.0"
+    "keywords": [
+        "fetch",
+        "http",
+        "get",
+        "post",
+        "patch",
+        "browser"
+    ],
+    "author": "D'Andrea Matias",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/dandreamatias/quoll.git"
     },
+    "bugs": {
+        "url": "https://github.com/dandreamatias/quoll/issues"
+    },
+    "homepage": "https://github.com/dandreamatias/quoll#readme",
+    "dependencies": {},
     "devDependencies": {
         "@babel/plugin-transform-modules-commonjs": "^7.15.4",
         "jest": "^27.2.4"

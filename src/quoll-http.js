@@ -84,13 +84,13 @@ export class QuollHTTP {
   async _handleResponse(res) {
     if (this._onEnd) this._onEnd();
     if (this._statusMap.has(res.status)) {
-      this._statusMap.get(res.status)(res);
+      await this._statusMap.get(res.status)(res);
     }
     if (!res.ok) {
       return [undefined, new HTTPError(res)];
     }
 
-    const data = await res[this._getResponseType(res)]();
+    const data = await res['json'](); // TODO this._getResponseType(res)
     return [data, undefined];
   }
 
