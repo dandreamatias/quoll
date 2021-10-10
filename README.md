@@ -158,13 +158,13 @@ githubApi.get('emojis'); // GET https://api.github.com/emojis
 
 `setHeaders({...headersProps})`
 
-setHeaders accept and object as a parameter, it replace the the whole headers property with a new one
+setHeaders accept an object as a parameter, it replace the the whole headers property with a new one
 
 `updateHeaders(key, value)`
 
-`updateHeaders` accept two parameters, a key and a value.
+`updateHeaders` accept two parameters, a key(string) and a value(string).
 
-`setHeaders({...headersProps})` and `updateHeaders` very usefull combined with `onHttpStart` to attach a fresh value:
+`setHeaders` and `updateHeaders` very usefull combined with `onHttpStart` to attach a fresh value in a http call:
 
 ```js
 quoll.onHttpStart(() => {
